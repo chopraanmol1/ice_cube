@@ -5,7 +5,7 @@ module IceCube
     attr_reader :time
 
     def initialize(time)
-      @time = TimeUtil.ensure_time time
+      @time = TimeUtil.ensure_time(time)
     end
 
     # Always terminating
@@ -19,14 +19,19 @@ module IceCube
       end
     end
 
-    def to_hash
-      { :time => time }
+    def to_s
+      time.to_s(:long)
     end
 
     def full_required?
       false
     end
 
+    def to_hash
+      {
+        rule_type: "IceCube::SingleOccurrenceRule",
+        time: time,
+      }
+    end
   end
-
 end

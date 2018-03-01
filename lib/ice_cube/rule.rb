@@ -6,7 +6,7 @@ module IceCube
 
     INTERVAL_TYPES = [
       :secondly, :minutely, :hourly,
-      :daily, :weekly, :monthly, :yearly
+      :daily, :weekly, :monthly, :yearly, :singleoccurrence
     ]
 
     attr_reader :uses
@@ -74,7 +74,7 @@ module IceCube
           raise ArgumentError, "Invalid rule frequency type: #{match[1]}"
         end
 
-        rule = IceCube::Rule.send(interval_type, hash[:interval] || 1)
+        rule = IceCube::Rule.send(interval_type,interval_type == :singleoccurrence ? hash[:time] : hash[:interval] || 1)
 
         if match[1] == "Weekly"
           rule.interval(hash[:interval] || 1, TimeUtil.wday_to_sym(hash[:week_start] || 0))
@@ -140,6 +140,10 @@ module IceCube
       # Yearly Rule
       def yearly(interval = 1)
         YearlyRule.new(interval)
+      end
+
+      def singleoccurrence(time = Time.current)
+        SingleOccurrenceRule.new(time)
       end
 
     end
